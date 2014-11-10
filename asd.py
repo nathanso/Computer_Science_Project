@@ -17,21 +17,8 @@ def tokenizer():
                 nStor1 = nStor2+1
     lSen= [item.lower() for item in lSen]
     for x in range (0, len(lSen)):
-        if lSen(x) == "":
+        if lSen(x) == '':
             lSen.remove(x)
     print(lSen)
-    
-def sentiment(lSen):
-    positive_words = []
-    with open('positive-words.txt') as inputfile:
-        for line in inputfile:
-            positive_words.append(line.strip())
-    negative_words = []
-    with open('negative-words.txt') as inputfile:
-        for line in inputfile:
-            positive_words.append(line.strip())
-    for x in range (0, len(positive_words)):
-        
-    
 
 tokenizer()
