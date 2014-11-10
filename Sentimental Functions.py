@@ -1,4 +1,4 @@
-def userSentence():
+def tokenizer():
     print("Please Enter your Sentence")
     sSentence = input()
     lSen = []
@@ -16,6 +16,7 @@ def userSentence():
                 lSen.append(sSentence[nStor1:nStor2])
                 nStor1 = nStor2+1
 
-def SAnalysis():
-    num_pos_tweets = 0
-    num_neg_tweets = 0
+def sentiment(lSen):
+    positive_words = []
+    negative_words = []
+    
