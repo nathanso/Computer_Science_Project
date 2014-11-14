@@ -1,6 +1,10 @@
 def tokenizer():
     print("Please Enter your Sentence")
     sSentence = input()
+    
+    if sSentence[len(sSentence):len(sSentence)+1] != ".":
+        sSentence = sSentence +"."
+    
     lSen = []
     nStor1 = 0
     nStor2 = 0
