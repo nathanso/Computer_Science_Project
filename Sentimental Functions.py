@@ -1,3 +1,5 @@
+import re
+
 def tokenizer():
     print("Please Enter your Sentence")
     sSentence = input()
@@ -9,19 +11,30 @@ def tokenizer():
     nStor1 = 0
     nStor2 = 0
     nLetter = ""
-    if sSentence[len(sSentence)-1:len(sSentence)]!== ".":
+    sWord = ""
+    sNegate = "n't"
+    if sSentence[len(sSentence)-1:len(sSentence)]!= ".":
         sSentence = sSentence +"."
     for i in range (0,  len(sSentence)):
         nLetter = ord(sSentence[i:i+1])
         nStor2 = i
         if nLetter == 32:
-            lSen.append(sSentence[nStor1:nStor2])
+            sWord = sSentence[nStor1:nStor2]
+            if sWord[len(sWord)-3:len(sWord)] == "n't":
+                sWord = sWord[0:len(sWord)-3]
+                lSen.append(sWord)
+                lSen.append(sNegate)
+            else:
+                lSen.append(sSentence[nStor1:nStor2])
             nStor1 = nStor2+1
         else:
             if nLetter == 44 or nLetter == 46:
                 lSen.append(sSentence[nStor1:nStor2])
                 nStor1 = nStor2+1
     lSen= [item.lower() for item in lSen]
+    sEmpty = ""
+    sEmpty in (
+    print(lSen)
     return lSen
 
 def sentiment(tokenizer):
@@ -54,5 +67,6 @@ def sentiment(tokenizer):
         print("This tweet is negative")
     else:
         print("this tweet is Positive")
-
+tokenizer()
 sentiment(tokenizer)
+
