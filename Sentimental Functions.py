@@ -23,7 +23,7 @@ def tokenizer():
             if sWord[len(sWord)-3:len(sWord)] == "n't":
                 sWord = sWord[0:len(sWord)-3]
                 lSen.append(sWord)
-                lSen.append(sNegate)
+                lSen.append(sNegate) 
             else:
                 lSen.append(sSentence[nStor1:nStor2])
             nStor1 = nStor2+1
@@ -33,7 +33,7 @@ def tokenizer():
                 nStor1 = nStor2+1
     lSen= [item.lower() for item in lSen]
     sEmpty = ""
-    sEmpty in (
+    
     print(lSen)
     return lSen
 
@@ -43,6 +43,7 @@ def sentiment(tokenizer):
     num_neg_tweets = 0
     pos_position_list = []
     neg_position_list = []
+    nSen = len(lSen)
     
     positive_words = []
     with open('positive-words.txt') as inputfile:
@@ -54,20 +55,23 @@ def sentiment(tokenizer):
         for line in inputfile:
             positive_words.append(line.strip())
 
-    for x in range (0, len(lSen)):
+    for x in range (0, nSen):
         for i in range(0, len(positive_words)):
             if lSen[x] == positive_words[i]:
                 num_pos_tweets = num_pos_tweets + 1
-                pos_postion_list.append(x)    
+                pos_position_list.append(x)    
 
-    for z in range (0, len(lSen)):
+    for z in range (0, nSen):
         for y in range(0, len(negative_words)):
-            if lSen[x] == negative_words[i]:
+            if lSen[z] == negative_words[i]:
                 num_neg_tweets = num_neg_tweets + 1
                 neg_position_list.append(z)
     
-    print(str(num_pos_tweets))
-    print(str(num_neg_tweets))
+    for g in range ( 0, len(pos_position_list)):
+        for h in range ( 0, nSen):
+            if lSen(pos_position_list(g)-1) == "n't":
+                num_neg_tweets = num_neg_tweets + 1
+                num_pos_tweets = num_pos_tweets-1
     
     if num_neg_tweets >= num_pos_tweets:
         print("This tweet is negative")
@@ -75,4 +79,3 @@ def sentiment(tokenizer):
         print("this tweet is Positive")
 tokenizer()
 sentiment(tokenizer)
-
