@@ -41,6 +41,9 @@ def sentiment(tokenizer):
     lSen = tokenizer()
     num_pos_tweets = 0
     num_neg_tweets = 0
+    pos_position_list = []
+    neg_position_list = []
+    
     positive_words = []
     with open('positive-words.txt') as inputfile:
         for line in inputfile:
@@ -55,11 +58,14 @@ def sentiment(tokenizer):
         for i in range(0, len(positive_words)):
             if lSen[x] == positive_words[i]:
                 num_pos_tweets = num_pos_tweets + 1
+                pos_postion_list.append(x)    
 
     for z in range (0, len(lSen)):
         for y in range(0, len(negative_words)):
             if lSen[x] == negative_words[i]:
                 num_neg_tweets = num_neg_tweets + 1
+                neg_position_list.append(z)
+    
     print(str(num_pos_tweets))
     print(str(num_neg_tweets))
     
