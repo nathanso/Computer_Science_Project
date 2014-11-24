@@ -22,8 +22,8 @@ def database():
         sourceCode = opener.open(page).read()
         try:
             titles = re.findall(r'<title>(.*?)</title>',sourceCode)
-            descriptions = re.findall(r'<description>(.*?)</description>',sourceCode>
-            links = re.findall(r'<link>(.*?)</link>',sourceCode>
+            descriptions = re.findall(r'<description>(.*?)</description>',sourceCode)
+            links = re.findall(r'<link>(.*?)</link>',sourceCode)
 
             for x in titles:
                 cur.execute("INSERT INTO RssFeed VALUES(x,titles[x], description[x], links[x])")
