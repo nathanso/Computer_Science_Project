@@ -26,7 +26,7 @@ def database():
             links = re.findall(r'<link>(.*?)</link>',sourceCode)
 
             for x in titles:
-                cur.execute("INSERT INTO RssFeed VALUES(x,titles[x], description[x], links[x])")
+                cur.execute('INSERT INTO RssFeed VALUES(x,titles[x], description[x], links[x])')
 
 
         except Exception, e:
