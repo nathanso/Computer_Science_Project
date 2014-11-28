@@ -15,6 +15,7 @@ opener.addheaders = [("User-agents","Google Chrome/39.0")]
 conn = sqlite3.connect("knowledgeBase.db")
 cur = conn.cursor()
 cur.execute("CREATE TABLE RssFeed(Id INT, Title TEXT, Description TEXT, Link TEXT)")
+table = []
 
 def database():
     try:
@@ -26,7 +27,7 @@ def database():
             links = re.findall(r'<link>(.*?)</link>',sourceCode)
 
             for x in range(1, len(titles)):
-                table = [[x,titles[x],descriptions[x],links[x]]]
+                table = [[x,titles(x),descriptions(x),links(x)]]
                 print table
 
         except Exception, e:
