@@ -25,8 +25,9 @@ def database():
             descriptions = re.findall(r'<description>(.*?)</description>',sourceCode)
             links = re.findall(r'<link>(.*?)</link>',sourceCode)
 
-            for x in titles:
-                cur.execute("INSERT INTO RssFeed VALUES(?, ?, ?, ?)"(x,titles[x], description[x], links[x]))
+            for x in range(1, len(titles)):
+                table = [[x,titles[x],descriptions[x],links[x]]]
+                print table
 
         except Exception, e:
             print"Failed in the 2nd Loop of Main function"
