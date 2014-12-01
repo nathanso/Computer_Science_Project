@@ -36,7 +36,7 @@ def processor(data):
             for eachDesc in descriptives:
                 print eachDesc
 
-        l
+        
 
                 
 
@@ -69,3 +69,4 @@ def database():
         print str(e)
 
 database()
+
