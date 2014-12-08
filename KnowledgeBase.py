@@ -30,17 +30,13 @@ def processor(data):
         elif len(entities) == 0:
             pass
         else:
-            print '_____________________'
-            print 'Named:', entities[0]
-            print 'Descriptions:'
+            print( '_____________________')
+            print ('Named:', entities[0])
+            print ('Descriptions:')
             for eachDesc in descriptives:
-                print eachDesc
+                print (eachDesc)                
 
-        l
-
-                
-
-    except Exception, e:
+    except Exception as e:
         print"error in the main Proccessor loop"
         print str(e)
 
@@ -54,18 +50,16 @@ def database():
             #descriptions = re.findall(r'<description>(.*?)</description>',sourceCode)
             links = re.findall(r'<link>(.*?)</link>',sourceCode)
             for eachTitle in Titles:
-                cur.execute("INSERT INTO RssFeed(Id, Title, Link) VALUES(?,?,?)",
-                             (x, Titles[x-1],links[x-1]))
-                x = x+1
+                cur.execute("INSERT INTO RssFeed(Id, Title, Link) VALUES(?,?,?)",(x, Titles[x-1],links[x-1]))
             time.sleep(555)
-            print 'finish'
+            print ('finish')
 
-        except Exception, e:
+        except Exception as e:
             print"Failed in the 2nd Loop of Main function"
-            print str(e)
+            print (str(e))
 
-    except Exception, e:
+    except Exception as e:
         print"Failed in the 1st Loop of Main function"
-        print str(e)
+        print (str(e))
 
 database()
