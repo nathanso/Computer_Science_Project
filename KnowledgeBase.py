@@ -37,6 +37,7 @@ def processor(data):
                 print (eachDesc)                
 
     except Exception as e:
+
         print"error in the main Proccessor loop"
         print str(e)
 
@@ -63,3 +64,4 @@ def database():
         print (str(e))
 
 database()
+

@@ -3,7 +3,7 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import time
-import nltk
+import csv
 
 
 
@@ -17,9 +17,9 @@ class listener(StreamListener):
 
     def on_data(self, data):
         tweet = data.split(',"text":"')[1].split('","source')[0]
-        tweetData = str(time.time()) + '::' + tweet
+        tweetData = str(time.time())
         saveFile = open('TwitterDB.csv','a')
-        saveFile.write(tweetData)
+        saveFile.write(tweetData+','+tweet)
         saveFile.write('\n')
         saveFile.close()
 
@@ -109,5 +109,5 @@ sUser = input()
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 twitterStream = Stream(auth, listener())
-twitterStream.filter(track = [sUser])
+twitterStream.filter(track = ['Call of Duty'])
 print('finish')
