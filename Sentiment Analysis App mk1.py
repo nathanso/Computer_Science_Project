@@ -4,6 +4,8 @@ from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import time
 import csv
+import collection
+import copy
 
 
 
@@ -22,15 +24,45 @@ class listener(StreamListener):
         saveFile.write(tweetData+','+tweet)
         saveFile.write('\n')
         saveFile.close()
+        time.sleep(100)
 
     def on_error(self, status):
         print (status) 
 
+
 def tokenizer():
-    print("Please Enter your Sentence")
-    sSentence = input()
-    
-    if sSentence[len(sSentence):len(sSentence)+1] != ".":
+    lTweets = []
+    with open('TwitterDB.csv', 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            lTweets.append(row[1])
+
+    for x in range (0, len(lTweets)):
+        lTweet = []
+        sTweet = lTweets[x]
+        lTweet = sTweet.splitline()
+        for y in range (0,len(lTweet)):
+            sWord = lTweet(y)
+            if sWord(len(sWord)-1:len(sWord)) == ",":
+                lTweet.insert(y+1,sWord[0:len(sWord)-1])
+                lTweet.remove(sTweet)
+                lTweet.insert(y+1, ",")
+            elif sWord(len(sWord)-1:len(sWord)) == ".":
+                lTweet.insert(y+1,sWord[0:len(sWord)-1])
+                lTweet.remove(sTweet)
+                lTweet.insert(y+1, ".")
+            elif sWord(len(sWord)-1:len(sWord)) == "?":
+                lTweet.insert(y+1,sWord[0:len(sWord)-1])
+                lTweet.remove(sTweet)
+                lTweet.insert(y+1, "?")
+            elif sWord(len(sWord)-1:len(sWord)) == "!":
+                lTweet.insert(y+1,sWord[0:len(sWord)-1])
+                lTweet.remove(sTweet)
+                lTweet.insert(y+1, "!")
+        
+        
+
+     if sSentence[len(sSentence):len(sSentence)+1] != ".":
         sSentence = sSentence +"."
     
     lSen = []
@@ -62,6 +94,7 @@ def tokenizer():
     
     print(lSen)
     return lSen
+
 
 def sentiment(tokenizer):
     lSen = tokenizer()
@@ -104,10 +137,15 @@ def sentiment(tokenizer):
     else:
         print("this tweet is Positive")
 
+
 print('What is your Movie')
 sUser = input()
 auth = OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_secret)
 twitterStream = Stream(auth, listener())
-twitterStream.filter(track = ['Call of Duty'])
+twitterStream.filter(track = [sUser])
 print('finish')
+
+
+
+
