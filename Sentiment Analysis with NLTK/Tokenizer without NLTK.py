@@ -12,6 +12,13 @@ def tokenizer ():
         sSent = lTokens[x]
         del lTokens[x]
         lTokens.insert(x,re.findall(r"[\w']+|[.,!?;]",sSent))
+"""
+        for z in range (0, len(lTokens[x])):
+            sToken = lTokens[x][z]
+            if sToken[len(sToken)-3:len(sToken)] == "n't":
+                lTokens[x].remove(sToken)
+                lTokens[x].insert((sToken[0,len(sToken)-4],"n't"),z)
+"""
         ##lTokens[x].extend(".")
     ##lTokens.remove(["."])
     lTokens.remove([])
@@ -43,16 +50,12 @@ def biGrams():
         lBigrams.append((lSent[i], lSent[i+1]))
     return lBigrams
 
-def nGrams():
+def nGrams(nInt):
     print('Enter a sentence')
     sSent = input()
-    print('state your n')
-    sNum = input()
-    nNum = int(sNum)
+    nNum = nInt
     lNgrams = []
-    lSent =re.findall(r"[\w']+|[.,!?;]",sSent)
-    for i in range(len(lSent)-nNum+1):
-        lNgrams.append(lSent[i:i+nNum])
+    lTokens =re.findall(r"[\w']+|[.,!?;]",sSent)
+    for i in range(len(lTokens)-nNum+1):
+        lNgrams.append(lTokens[i:i+nNum])
     return(lNgrams)
-
-def 
