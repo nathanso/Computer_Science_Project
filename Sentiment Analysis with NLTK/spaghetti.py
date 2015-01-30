@@ -1,12 +1,10 @@
-import nltk
-from nltk.corpus import brown as bCorpus
 from nltk import UnigramTagger as ut
 from nltk import BigramTagger as bt
-from cPickle import dump,load
+from pickle import dump,load
 
 def loadtagger(taggerfilename):
         infile = open(taggerfilename,'rb')
-        tagger = load(infile); infile.close()
+        tagger = load(infile);infile.close()
         return tagger
 
 def traintag(corpusname, corpus):
@@ -20,8 +18,8 @@ def traintag(corpusname, corpus):
         # Training BigramTagger.
         bi_tag = bt(corpus)
         savetagger(corpusname+'_bigram.tagger',bi_tag)
-        print "Tagger trained with",corpusname,"using" +\
-                                "UnigramTagger and BigramTagger."
+        print ("Tagger trained with",corpusname,"using" +\
+                                "UnigramTagger and BigramTagger.")
         return
 
 # Function to unchunk corpus.
@@ -40,12 +38,11 @@ class cesstag():
                         loadtagger('cess_unigram.tagger').tag(['estoy'])
                         loadtagger('cess_bigram.tagger').tag(['estoy'])
                 except IOError:
-                        print "*** First-time use of cess tagger ***"
-                        print "Training tagger ..."
+                        print ("*** First-time use of cess tagger ***")
+                        print ("Training tagger ...")
                         from nltk.corpus import cess_esp as cess
                         cess_sents = cess.tagged_sents()
                         traintag('cess',cess_sents)
-                        # Trains the tagger with no MWE.
                         cess_nomwe = unchunk(cess.tagged_sents())
                         tagged_cess_nomwe = batch_pos_tag(cess_nomwe)
                         traintag('cess_nomwe',tagged_cess_nomwe)
@@ -65,3 +62,6 @@ def pos_tag(tokens, mmwe=True):
 def batch_pos_tag(sentences, mmwe=True):
         tagger = cesstag(mmwe)
         return tagger.uni.batch_tag(sentences)
+
+tagger = cesstag()
+print (tagger.uni.tag('I AM A MAN .'.split()))

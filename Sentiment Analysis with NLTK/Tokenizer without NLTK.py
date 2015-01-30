@@ -7,23 +7,25 @@ import re
 def tokenizer ():
     print('Enter Some sentences')
     sSent = input()
-    lTokens = sSent.split(".")
-    for x in range (0, len(lTokens)):
-        sSent = lTokens[x]
-        del lTokens[x]
-        lTokens.insert(x,re.findall(r"[\w']+|[.,!?;]",sSent))
+    #lTokens = sSent.split(".")
+    #for x in range (0, len(lTokens)):
+        #sSent = lTokens[x]
+        #del lTokens[x]
+
+    lTokens = re.findall(r"[\w']+|[.,!?;]",sSent)
+    #lTokens.remove([])
+    print(lTokens)
+    return lTokens
 """
         for z in range (0, len(lTokens[x])):
             sToken = lTokens[x][z]
             if sToken[len(sToken)-3:len(sToken)] == "n't":
                 lTokens[x].remove(sToken)
                 lTokens[x].insert((sToken[0,len(sToken)-4],"n't"),z)
-"""
+
         ##lTokens[x].extend(".")
     ##lTokens.remove(["."])
-    lTokens.remove([])
-    print(lTokens)
-    return lTokens
+"""
 
 def wordSentListFreq ():
     lTokens = tokenizer()
@@ -59,3 +61,4 @@ def nGrams(nInt):
     for i in range(len(lTokens)-nNum+1):
         lNgrams.append(lTokens[i:i+nNum])
     return(lNgrams)
+tokenizer()
