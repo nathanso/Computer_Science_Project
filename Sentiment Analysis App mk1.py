@@ -15,10 +15,10 @@ access_token = '2797292249-DpQSv3x81hHuPQCSgyyowyWiQk5nWFQUHz94quG'
 access_secret = '0kK2PLwxdiXG7PAyZgBGptvqUO9Aiz5hPsQZHVecqdh8Q'
 
 
-class listener(StreamListener):
+class listener(StreamListener): # collects the tweets
 
-    def on_data(self, data):
-        tweet = data.split(',"text":"')[1].split('","source')[0]
+    def on_data(self, data): #
+        tweet = data.split(',"text":"')[1].split('","source')[0]#each tweet is split into 
         tweetData = str(time.time())
         saveFile = open('TwitterDB.csv','a')
         saveFile.write(tweetData+','+tweet)
