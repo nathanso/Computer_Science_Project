@@ -1,14 +1,11 @@
-import re, math, itertools, os, pickle
-import collections
-from os import path
+import re, math, itertools, pickle, collections, os
 from collections import defaultdict, Counter
-import nltk.util
-import nltk.collocations
-from nltk.metrics import BigramAssocMeasures
+#import nltk.util, nltk.collocations, nltk.metrics
 
-POLARITY_DATA_DIR = os.path.join('D:\\', 'rt-polaritydata')
-RT_POLARITY_POS_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-pos.txt')
-RT_POLARITY_NEG_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-neg.txt')
+POLARITY_DATA_DIR = os.path.join('D:\\', 'rt-polaritydata') # File path of the Test Data
+
+RT_POLARITY_POS_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-pos.txt') #Name of the positive test data
+RT_POLARITY_NEG_FILE = os.path.join(POLARITY_DATA_DIR, 'rt-polarity-neg.txt') #Name of the negative test data
 
 _ADD_LOGS_MAX_DIFF = math.log(1e-30, 2)
 _NINF = float('-1e300')
@@ -26,7 +23,6 @@ def reduce(function, iterable, initializer=None):
         accum_value = function(accum_value, x)
     return accum_value
 
-
 def add_logs(logx, logy):
     if (logx < logy + _ADD_LOGS_MAX_DIFF):
         return logy
@@ -35,72 +31,72 @@ def add_logs(logx, logy):
     base = min(logx, logy)
     return base + math.log(2 ** (logx - base) + 2 ** (logy - base), 2)
 
-
 def sum_logs(logs):
     return reduce(add_logs, logs[1:], logs[0])
 
+class FDist(Counter): # A frequency Distribution class, with attributes from the Counter Library module.
 
-class FDist(Counter):
-    def __init__(self, sampleData=None):
-        Counter.__init__(self, sampleData)
+    def __init__(self, sampleData=None): #Has sampleData being the
+        Counter.__init__(self, sampleData) # Uses Counter class's instantiation
 
-    def nTotal(self):
+    def nTotal(self): #Return the total number of sample outcomes
         return sum(self.values())
 
-    def wMore(self):
+    def wMore(self): #Returns the total amount of samples that is greater than 0
         return len(self)
 
-    def wSingle(self):
+    def wSingle(self): #Returns samples which only occurred once in the sampleData
         return [item for item in self if self[item] == 1]
 
-    def wordFreq(self):
+    def wordFreq(self): # Returns a dictionary of samples and the frequency
         wordFreq = defaultdict(int)
         for value in self.values():
             wordFreq[value] += 1
         return wordFreq
 
-    def cFreq(self, sampleData):
+    def cFreq(self, sampleData):# Returns the cumulative frequency of a sample
         cFreq = 0.0
         for sample in sampleData:
             cFreq += self[sample]
         return cFreq
 
-    def maxWord(self):
+    def maxWord(self):# Returns the most common sample in the SampleData
         return self.most_common(1)[0][0]
 
+class PDist(): # A Super-Class the calculates the probability distribution of the sample
 
-class PDist():
-    SUM_TO_ONE = True
+    SUM_TO_ONE = True # A boolean that displays that sum of all probability is one.
 
-    def __init__(self):
+    def __init__(self): # As it is a Super-Class, it is suppose to be a framework for the Sub-Classes below this
         if self.__class__ == PDist:
             raise NotImplementedError("Interfaces can't be instantiated")
 
-    def prob(self, sample):
+    def prob(self, sample): #Returns the probability of a sample
         raise NotImplementedError()
 
-    def lProb(self, sample):
+    def lProb(self, sample): # returns of the probability of a sample in log base 2
         prob = self.prob(sample)
         return (math.log(prob, 2)
                 if prob != 0 else _NINF)
 
-    def maxWords(self):
+    def maxWords(self): # Returns the sample with the biggest probability
         raise NotImplementedError()
 
     def sampleData(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def discount(self):
         return 0.0
 
 
-class DictionaryPDist():
-    def __init__(self, PDict=None, log=False, normalize=False):
-        self.PDict = (PDict.copy() if PDict is not None else {})
-        self.log = log
+class DictPDist(PDist): # A Sub-Class that calculates the probability of samples based on the dictionary produced
 
-        if normalize:
-            if log:
+    def __init__(self, PDict=None, log=False, normalise=False):
+        self.PDict = (PDict.copy() if PDict is not None else {}) # PDict is probability dictionary if there is already there
+        self.log = log # Attribute that stores a boolean, based on the instantiated
+
+        if normalise: # If normalise is true, then the log attribute is evaluated
+            if log: # Evaluate log's value (whether is true or false)
                 value_sum = sum_logs(list(self.PDict.values()))
                 if value_sum <= _NINF:
                     logp = math.log(1.0 / len(PDict), 2)
@@ -141,7 +137,7 @@ class DictionaryPDist():
         return self.max
 
     def samples(self):
-        return self.PDist.keys()
+        return self.PDict.keys()
 
 
 class LidstoneProbDist(PDist):
@@ -190,7 +186,7 @@ class ELEProbDist(LidstoneProbDist):
         LidstoneProbDist.__init__(self, FDist, 0.5, bins)
 
 
-class ConditionalFreqDist(defaultdict):
+class CondFDist(defaultdict):
     def __init__(self, cond_samples=None):
         defaultdict.__init__(self, FDist)
         if cond_samples:
@@ -212,15 +208,15 @@ class NaiveBayesClassifier():
     def __init__(self, label_probdist, feature_probdist):
         self._label_probdist = label_probdist
         self._feature_probdist = feature_probdist
-        self._labels = list(label_probdist.samples())
+        self.labels = list(label_probdist.samples())
 
     def labels(self):
-        return self._labels
+        return self.labels
 
     def prob_classify(self, featureset):
         featureset = featureset.copy()
         for fname in list(featureset.keys()):
-            for label in self._labels:
+            for label in self.labels:
                 if (label, fname) in self._feature_probdist:
                     break
             else:
@@ -228,20 +224,20 @@ class NaiveBayesClassifier():
 
         logprob = {}
 
-        for label in self._labels:
+        for label in self.labels:
             logprob[label] = self._label_probdist.lProb(label)
 
-            for     label in self._labels:
+            for     label in self.labels:
                 for (fname, fval) in featureset.items():
                     if (label, fname) in self._feature_probdist:
                         feature_probs = self._feature_probdist[label, fname]
                         if label not in logprob:
-                            for label in self._labels:
+                            for label in self.labels:
                                 logprob[label] = 0
                         logprob[label] = logprob[label] + feature_probs.lProb(fval)
                     else:
                         logprob[label] += sum_logs([])
-        return DictionaryPDist(logprob, normalize=True, log=True)
+        return DictPDist(logprob, log=True, normalise=True)
 
     def classify(self, featureset):
         return self.prob_classify(featureset).max()
@@ -258,7 +254,7 @@ class NaiveBayesClassifier():
             def labelprob(l):
                 return cpdist[l, fname].prob(fval)
 
-            labels = sorted([l for l in self._labels
+            labels = sorted([l for l in self.labels
                              if fval in cpdist[l, fname].samples()],
                             key=labelprob)
             if len(labels) == 1:
@@ -374,6 +370,7 @@ def evaluate_features(feature_select):
         referenceSets[label].add(i)
         predicted = classifier.classify(features)
         testSets[predicted].add(i)
+    """
     print('train on %d instances, test on %d instances' % (len(trainFeatures), len(testFeatures)))
     print('accuracy:', nltk.classify.util.accuracy(classifier, testFeatures))
     print('pos precision:', nltk.metrics.precision(referenceSets['pos'], testSets['pos']))
@@ -381,6 +378,23 @@ def evaluate_features(feature_select):
     print('neg precision:', nltk.metrics.precision(referenceSets['neg'], testSets['neg']))
     print('neg recall:', nltk.metrics.recall(referenceSets['neg'], testSets['neg']))
     classifier.show_most_informative_features(10)
+    """
+def _contingency(n_ii, n_ix_xi_tuple, n_xx):
+    (n_ix, n_xi) = n_ix_xi_tuple
+    n_oi = n_xi - n_ii
+    n_io = n_ix - n_ii
+    return (n_ii, n_oi, n_io, n_xx - n_ii - n_oi - n_io)
+
+def _marginals(n_ii, n_oi, n_io, n_oo):
+    return (n_ii, (n_oi + n_ii, n_io + n_ii), n_oo + n_oi + n_io + n_ii)
+
+def phi_sq(*marginals):
+    n_ii, n_io, n_oi, n_oo = _contingency(*marginals)
+    return float((n_ii*n_oo - n_io*n_oi)**2) /((n_ii + n_io) * (n_ii + n_oi) * (n_io + n_oo) * (n_oi + n_oo))
+
+def chi_sq(n_ii, n_ix_xi_tuple, n_xx):
+    (n_ix, n_xi) = n_ix_xi_tuple
+    return n_xx *phi_sq(n_ii, (n_ix, n_xi), n_xx)
 
 
 def make_full_dict(words):
@@ -400,7 +414,7 @@ def create_word_scores():
     posWords = list(itertools.chain(*posWords))
     negWords = list(itertools.chain(*negWords))
     word_fd = FDist()
-    cond_word_fd = ConditionalFreqDist()
+    cond_word_fd = CondFDist()
     for word in posWords:
         word_fd[word.lower()] += 1
         cond_word_fd['pos'][word.lower()] += 1
@@ -412,8 +426,8 @@ def create_word_scores():
     total_word_count = pos_word_count + neg_word_count
     word_scores = {}
     for word, freq in word_fd.items():
-        pos_score = BigramAssocMeasures.chi_sq(cond_word_fd['pos'][word], (freq, pos_word_count), total_word_count)
-        neg_score = BigramAssocMeasures.chi_sq(cond_word_fd['neg'][word], (freq, neg_word_count), total_word_count)
+        pos_score = chi_sq(cond_word_fd['pos'][word], (freq, pos_word_count), total_word_count)
+        neg_score = chi_sq(cond_word_fd['neg'][word], (freq, neg_word_count), total_word_count)
         word_scores[word] = pos_score + neg_score
     return word_scores
 
@@ -443,6 +457,7 @@ else:
     for num in numbers_to_test:
         print('evaluating best %d word features' % (num))
         best_words = find_best_words(word_score, num)
+
         evaluate_features(best_word_features)
     classifier2 = load_classifier()
-    print(classifier2.classify(best_word_features(reviews.split())))
+    print(classifier2.classify(best_word_features(review.split())))
